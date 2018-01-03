@@ -17,22 +17,31 @@ namespace Samples.SerilogAspNetCore
 
         public static void Main(string[] args)
         {
-            var logger = new LoggerConfiguration()
+            Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(Configuration)
                 .CreateLogger();
 
-            logger.Information("Hello, world!");
-
-
-            BuildWebHost(args).Run();
+            try
+            {
+                Log.Information("Starting application");
+                BuildWebHost(args).Run();
+            }
+            catch (Exception e)
+            {
+                Log.Fatal(e, "Error during initialisation");
+                throw;
+            }
+            finally
+            {
+                Log.CloseAndFlush();
+            }
         }
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
                 .UseConfiguration(Configuration)
-                .UseSerilog((hostingContext, loggerConfiguration) => loggerConfiguration
-                    .ReadFrom.Configuration(hostingContext.Configuration))
+                .UseStartup<Startup>()
+                .UseSerilog()
                 .Build();
     }
 }

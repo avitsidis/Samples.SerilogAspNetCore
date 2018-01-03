@@ -17,7 +17,6 @@ namespace Samples.SerilogAspNetCore
         
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true));
             services.AddMvc();
         }
         
